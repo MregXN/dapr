@@ -148,7 +148,6 @@ jobs:
           # Deploy Linux arm64/amd64 and Windows clusters
           # Retry the deployment twice in case of transient failures (such as capacity constraints)
           success=false
-          az account set --subscription ${{ env.AZURE_SUB_ID }}
           for i in 1 2 3; do 
             az deployment sub create \
               --name "${{ env.TEST_PREFIX }}" \
