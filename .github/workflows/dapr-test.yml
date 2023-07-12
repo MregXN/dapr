@@ -116,7 +116,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix
         if: env.CHECKOUT_REPO != ''
         run: |
@@ -295,7 +296,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Login to cache registry for Windows
         if: runner.os == 'Windows' && env.CHECKOUT_REPO != '' && env.DAPR_CACHE_REGISTRY != ''
         run: |
@@ -483,7 +485,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix and set env vars
         if: env.CHECKOUT_REPO != ''
         run: |
@@ -678,7 +681,8 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix
         run: |
           BASE_STR="E2E|${GITHUB_SHA}|${GITHUB_SERVER_URL}|${GITHUB_REPOSITORY}|${GITHUB_RUN_ID}|${GITHUB_RUN_ATTEMPT}"
