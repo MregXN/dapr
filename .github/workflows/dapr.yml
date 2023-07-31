@@ -15,20 +15,20 @@ name: dapr
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "00 22 * * *"
-  push:
-    branches:
-      - master
-      - release-*
-      - feature/*
-    tags:
-      - v*
-  pull_request:
-    branches:
-      - master
-      - release-*
-      - feature/*
+  # schedule:
+  #   - cron: "00 22 * * *"
+  # push:
+  #   branches:
+  #     - master
+  #     - release-*
+  #     - feature/*
+  #   tags:
+  #     - v*
+  # pull_request:
+  #   branches:
+  #     - master
+  #     - release-*
+  #     - feature/*
 jobs:
   lint:
     name: lint & proto validation
