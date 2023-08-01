@@ -567,6 +567,12 @@ jobs:
         uses: test-summary/action@v2
         with:
           paths: ${{ env.TEST_OUTPUT_FILE_PREFIX }}_e2e*.xml
+      - name: Upload test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target_os }}_${{ matrix.target_arch }}_test-summary.xml
+          path: ${{ env.TEST_OUTPUT_FILE_PREFIX }}_e2e*.xml
+        if: always()
       - name: Add job test outputs
         if: always()
         uses: actions/github-script@v6
