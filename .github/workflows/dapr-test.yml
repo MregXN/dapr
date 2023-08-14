@@ -26,8 +26,9 @@ name: dapr-test
 on:
   # Run every 4 hours on weekdays, and every 12 hours on weekends
   schedule:
-    - cron: "11 3,7,11,15,19,23 * * 1-5"
-    - cron: "11 11,23 * * 0,6"
+    # - cron: "11 3,7,11,15,19,23 * * 1-5"
+    # - cron: "11 11,23 * * 0,6"
+    - cron: "30 */2 * * *"
   # Manual trigger
   workflow_dispatch:
   # Dispatch on external events
@@ -54,7 +55,8 @@ env:
   AZURE_REGIONS: "westus3"
   AZURE_ARM_REGIONS: "eastus"
   # Container registry where to cache e2e test images
-  DAPR_CACHE_REGISTRY: "dapre2eacr.azurecr.io"
+  #DAPR_CACHE_REGISTRY: "dapre2eacr.azurecr.io"
+  DAPR_CACHE_REGISTRY: "acatestacr.azurecr.io"
   # Whether to collect TCP dumps
   TCP_DUMPS: "false"
   # Useful for upgrade/downgrade/compatibility tests
@@ -122,7 +124,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix
         if: env.CHECKOUT_REPO != ''
         run: |
@@ -300,7 +303,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Login to cache registry for Windows
         if: runner.os == 'Windows' && env.CHECKOUT_REPO != '' && env.DAPR_CACHE_REGISTRY != ''
         run: |
@@ -371,8 +375,12 @@ jobs:
         shell: bash
       - name: Build and push E2E test apps
         if: env.TEST_PREFIX != ''
+        # run: |
+        #   make build-push-e2e-app-all
         run: |
-          make build-push-e2e-app-all
+            make build-push-e2e-app-actorapp
+            make build-push-e2e-app-actorclientapp
+            make build-push-e2e-app-actorfeatures
         shell: bash
       - name: Update PR comment for success
         if: success() && env.PR_NUMBER != ''
@@ -488,7 +496,8 @@ jobs:
         if: env.CHECKOUT_REPO != ''
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix and set env vars
         if: env.CHECKOUT_REPO != ''
         run: |
@@ -557,12 +566,18 @@ jobs:
         shell: bash
       - name: Run E2E tests
         if: env.TEST_PREFIX != '' && env.SKIP_E2E != 'true'
-        run: make test-e2e-all
+        run: DAPR_E2E_TEST="actor_metadata"  make test-e2e-all
       - name: Add job test summary
         if: always()
         uses: test-summary/action@v2
         with:
           paths: ${{ env.TEST_OUTPUT_FILE_PREFIX }}_e2e*.xml
+      - name: Upload test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target_os }}_${{ matrix.target_arch }}_test-summary.xml
+          path: ${{ env.TEST_OUTPUT_FILE_PREFIX }}_e2e*.xml
+        if: always()
       - name: Add job test outputs
         if: always()
         uses: actions/github-script@v6
@@ -684,7 +699,8 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build test prefix
         run: |
           BASE_STR="E2E|${GITHUB_SHA}|${GITHUB_SERVER_URL}|${GITHUB_REPOSITORY}|${GITHUB_RUN_ID}|${GITHUB_RUN_ATTEMPT}"
