@@ -379,6 +379,7 @@ jobs:
         #   make build-push-e2e-app-all
         run: |
             make build-push-e2e-app-actorapp
+            make build-push-e2e-app-actorclientapp
             make build-push-e2e-app-actorfeatures
         shell: bash
       - name: Update PR comment for success
@@ -565,7 +566,7 @@ jobs:
         shell: bash
       - name: Run E2E tests
         if: env.TEST_PREFIX != '' && env.SKIP_E2E != 'true'
-        run: DAPR_E2E_TEST="actor_metadata"  make test-e2e-all
+        run: DAPR_E2E_TEST="actor_reminder"  make test-e2e-all
       - name: Add job test summary
         if: always()
         uses: test-summary/action@v2
