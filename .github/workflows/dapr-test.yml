@@ -379,6 +379,7 @@ jobs:
         #   make build-push-e2e-app-all
         run: |
             make build-push-e2e-app-actorapp
+            make build-push-e2e-app-actorclientapp
             make build-push-e2e-app-actorfeatures
         shell: bash
       - name: Update PR comment for success
