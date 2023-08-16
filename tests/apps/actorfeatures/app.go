@@ -193,6 +193,7 @@ func appendLog(actorType string, actorID string, action string, start int) {
 	actorLogsMutex.Lock()
 	defer actorLogsMutex.Unlock()
 	actorLogs = append(actorLogs, logEntry)
+	log.Println("now log len is :" + strconv.Itoa(len(actorLogs)))
 }
 
 func getLogs() []actorLogEntry {
@@ -310,6 +311,7 @@ func actorMethodHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("actorMethodHandler")
 	appendLog(actorType, id, method, start)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -342,6 +344,7 @@ func deactivateActorHandler(w http.ResponseWriter, r *http.Request) {
 		actors.Delete(actorID)
 	}
 
+	log.Println("deactivateActorHandler")
 	appendLog(actorType, id, action, start)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
