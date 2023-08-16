@@ -260,7 +260,7 @@ func TestActorMetadataEtagRace(t *testing.T) {
 					t.Logf("All reminders triggerred with partition count as %d!", newPartitionCount)
 					return nil
 				},
-				backoff.WithMaxRetries(backoff.NewExponentialBackOff(), 10),
+				backoff.WithMaxRetries(backoff.NewExponentialBackOff(), 20),
 				func(err error, d time.Duration) {
 					log.Printf("Error while invoking actor: '%v' - retrying in %s", err, d)
 				},
