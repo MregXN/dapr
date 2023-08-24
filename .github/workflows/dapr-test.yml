@@ -375,14 +375,14 @@ jobs:
         shell: bash
       - name: Build and push E2E test apps
         if: env.TEST_PREFIX != ''
-        # run: |
-        #   make build-push-e2e-app-all
         run: |
-            make build-push-e2e-app-service_invocation
-            make build-push-e2e-app-service_invocation_external
-            make build-push-e2e-app-service_invocation_grpc
-            make build-push-e2e-app-service_invocation_grpc_proxy_client
-            make build-push-e2e-app-service_invocation_grpc_proxy_server
+          make build-push-e2e-app-all
+        # run: |
+        #     make build-push-e2e-app-service_invocation
+        #     make build-push-e2e-app-service_invocation_external
+        #     make build-push-e2e-app-service_invocation_grpc
+        #     make build-push-e2e-app-service_invocation_grpc_proxy_client
+        #     make build-push-e2e-app-service_invocation_grpc_proxy_server
         shell: bash
       - name: Update PR comment for success
         if: success() && env.PR_NUMBER != ''
@@ -568,7 +568,8 @@ jobs:
         shell: bash
       - name: Run E2E tests
         if: env.TEST_PREFIX != '' && env.SKIP_E2E != 'true'
-        run: DAPR_E2E_TEST="service_invocation"  make test-e2e-all
+        #run: DAPR_E2E_TEST="service_invocation"  make test-e2e-all
+        run:  make test-e2e-all
       - name: Add job test summary
         if: always()
         uses: test-summary/action@v2
