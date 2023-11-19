@@ -30,8 +30,6 @@ import (
 )
 
 const (
-	appName            = "hellodapr"
-	daprServiceName    = appName + "-dapr"
 	appIDAnnotationKey = "dapr.io/app-id"
 )
 
@@ -45,8 +43,21 @@ func TestMain(m *testing.M) {
 	// and will be cleaned up after all tests are finished automatically
 	testApps := []kube.AppDescription{
 		{
-			AppName:           appName,
+			AppName:           "hellodapr",
 			DaprEnabled:       true,
+			ImageName:         "e2e-hellodapr",
+			Replicas:          1,
+			IngressEnabled:    false,
+			MetricsEnabled:    true,
+			DaprMemoryLimit:   "200Mi",
+			DaprMemoryRequest: "100Mi",
+			AppMemoryLimit:    "200Mi",
+			AppMemoryRequest:  "100Mi",
+		},
+		{
+			AppName:           "hellodaprwithemptynamespace",
+			DaprEnabled:       true,
+			Namespace:         "",
 			ImageName:         "e2e-hellodapr",
 			Replicas:          1,
 			IngressEnabled:    false,
@@ -62,7 +73,7 @@ func TestMain(m *testing.M) {
 	code := tr.Start(m)
 
 	for _, app := range testApps {
-		_, err := tr.Platform.GetService(daprServiceName)
+		_, err := tr.Platform.GetService(app.AppName + "-dapr")
 		if err == nil {
 			log.Fatalf("the dapr service %s still exists after app %s deleted", daprServiceName, app.AppName)
 		} else if !errors.IsNotFound(err) {
@@ -74,7 +85,13 @@ func TestMain(m *testing.M) {
 }
 
 func TestHelloDapr(t *testing.T) {
-	service, err := tr.Platform.GetService(daprServiceName)
+	service, err := tr.Platform.GetService()
+	require.NoError(t, err)
+	require.Equal(t, appName, service.Annotations[appIDAnnotationKey])
+}
+
+func TestEmptyNamespace(t *testing.T) {
+	service, err := tr.Platform.GetService()
 	require.NoError(t, err)
 	require.Equal(t, appName, service.Annotations[appIDAnnotationKey])
 }
